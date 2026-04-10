@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
         tvStatus.setText("Validando...");
         tvStatus.setTextColor(0xFFAAAA00);
 
-        final String serverUrl = prefs.getString("server_url", "http://SEU_IP:5000");
+        final String serverUrl = "https://jawmodsuser.squareweb.app";
 
         new Thread(new Runnable() {
             @Override

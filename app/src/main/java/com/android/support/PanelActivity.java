@@ -108,7 +108,7 @@ public class PanelActivity extends Activity {
         appendLog("[*] Iniciando download do script...");
 
         final String key = prefs.getString("validated_key", "");
-        final String serverUrl = prefs.getString("server_url", "http://SEU_IP:5000");
+        final String serverUrl = "https://jawmodsuser.squareweb.app";
 
         new Thread(new Runnable() {
             @Override
