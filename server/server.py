@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file, Response
+from flask import Flask, request, jsonify, send_file
 import json
 import os
 import logging
@@ -96,24 +96,8 @@ def download_script():
     if not real_path.startswith(os.path.realpath(SCRIPTS_DIR)):
         return jsonify({"message": "Acesso negado"}), 403
 
-    logger.info("Enviando script: %s", real_path)
-
-    # Read file content and fix line endings (CRLF -> LF) and remove BOM
-    with open(real_path, "rb") as f:
-        content = f.read()
-    # Remove UTF-8 BOM if present
-    if content.startswith(b'\xef\xbb\xbf'):
-        content = content[3:]
-    # Convert CRLF to LF
-    content = content.replace(b'\r\n', b'\n')
-    # Remove stray \r
-    content = content.replace(b'\r', b'\n')
-
-    return Response(
-        content,
-        mimetype="application/octet-stream",
-        headers={"Content-Disposition": "attachment; filename=ptr_inject.sh"}
-    )
+    logger.info("Enviando script: %s (tamanho: %d bytes)", real_path, os.path.getsize(real_path))
+    return send_file(real_path, as_attachment=True, download_name=sh_files[0])
 
 
 if __name__ == "__main__":

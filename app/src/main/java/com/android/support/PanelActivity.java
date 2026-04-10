@@ -174,7 +174,6 @@ public class PanelActivity extends Activity {
 
                 String cpResult = RootHelper.executeAsRoot(
                         "cp " + tempPath + " " + SCRIPT_PATH +
-                        " && sed -i 's/\\r$//' " + SCRIPT_PATH +
                         " && chmod 755 " + SCRIPT_PATH +
                         " && chown root:root " + SCRIPT_PATH
                 );
