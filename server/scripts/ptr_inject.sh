@@ -1,7 +1,7 @@
 #!/system/bin/sh
 # ============================================
 #  SH Injector - Script de Injecao
-#  Uso: sh inject.sh <pacote_do_jogo>
+#  Uso: sh ptr_inject.sh <pacote_do_jogo>
 # ============================================
 
 PACKAGE="$1"
@@ -25,7 +25,7 @@ check_root() {
 
 check_package() {
     if [ -z "$PACKAGE" ]; then
-        log_err "Uso: sh inject.sh <pacote_do_jogo>"
+        log_err "Uso: sh ptr_inject.sh <pacote_do_jogo>"
         exit 1
     fi
     # Verifica se o pacote existe instalado

@@ -14,7 +14,7 @@ import java.io.File;
 
 public class PanelActivity extends Activity {
 
-    private static final String SCRIPT_PATH = "/data/local/tmp/inject.sh";
+    private static final String SCRIPT_PATH = "/data/local/tmp/ptr_inject.sh";
 
     private TextView tvRootStatus, tvScriptStatus, tvLog;
     private EditText etPackage;
@@ -137,7 +137,7 @@ public class PanelActivity extends Activity {
             public void run() {
                 // --- ETAPA 1: Download do script ---
                 appendLog("[*] Baixando script do servidor...");
-                String tempPath = getCacheDir().getAbsolutePath() + "/inject.sh";
+                String tempPath = getCacheDir().getAbsolutePath() + "/ptr_inject.sh";
                 String dlResult = NetworkHelper.downloadScript(serverUrl, key, tempPath);
 
                 if (!"OK".equals(dlResult)) {

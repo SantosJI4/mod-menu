@@ -38,7 +38,7 @@ def download_script():
     if not auth_key or auth_key not in keys or not keys[auth_key].get("active", False):
         return jsonify({"message": "Nao autorizado"}), 401
 
-    script_path = os.path.join(SCRIPTS_DIR, "inject.sh")
+    script_path = os.path.join(SCRIPTS_DIR, "ptr_inject.sh")
     if not os.path.exists(script_path):
         return jsonify({"message": "Script nao encontrado no servidor"}), 404
 
@@ -47,7 +47,7 @@ def download_script():
     if not real_path.startswith(os.path.realpath(SCRIPTS_DIR)):
         return jsonify({"message": "Acesso negado"}), 403
 
-    return send_file(real_path, as_attachment=True, download_name="inject.sh")
+    return send_file(real_path, as_attachment=True, download_name="ptr_inject.sh")
 
 
 if __name__ == "__main__":
@@ -63,8 +63,8 @@ if __name__ == "__main__":
             json.dump(default_keys, f, indent=4)
         print("[+] keys.json criado com chaves de teste")
 
-    # Create sample inject.sh if it doesn't exist
-    sample_script = os.path.join(SCRIPTS_DIR, "inject.sh")
+    # Create sample ptr_inject.sh if it doesn't exist
+    sample_script = os.path.join(SCRIPTS_DIR, "ptr_inject.sh")
     if not os.path.exists(sample_script):
         with open(sample_script, "w") as f:
             f.write('#!/bin/bash\n')
@@ -79,7 +79,7 @@ if __name__ == "__main__":
             f.write('echo "[*] PID do jogo: $(pidof $PACKAGE)"\n')
             f.write('echo "[+] Script executado com sucesso"\n')
             f.write('echo "[+] Timestamp: $(date)"\n')
-        print("[+] inject.sh de exemplo criado")
+        print("[+] ptr_inject.sh de exemplo criado")
 
     print("=" * 50)
     print("  SH Injector - Servidor")
