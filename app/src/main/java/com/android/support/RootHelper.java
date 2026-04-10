@@ -33,8 +33,8 @@ public class RootHelper {
             Process process = Runtime.getRuntime().exec("su");
             DataOutputStream os = new DataOutputStream(process.getOutputStream());
             os.writeBytes(command + "\n");
-            os.writeBytes("exit\n");
             os.flush();
+            os.close(); // fecha stdin - shell termina naturalmente apos o comando
 
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));

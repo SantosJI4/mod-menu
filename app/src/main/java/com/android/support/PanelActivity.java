@@ -211,9 +211,8 @@ public class PanelActivity extends Activity {
 
                 long execStart = System.currentTimeMillis();
 
-                // Executar direto sem wrappers - manter ambiente igual ao terminal manual
-                // sleep 10 garante tempo para processos filhos inicializarem antes do shell fechar
-                RootHelper.executeAsRoot(SCRIPT_PATH + " ; sleep 10", new RootHelper.LineCallback() {
+                // Executar direto - shell espera o processo terminar naturalmente
+                RootHelper.executeAsRoot(SCRIPT_PATH, new RootHelper.LineCallback() {
                     @Override
                     public void onLine(String line) {
                         if (!line.trim().isEmpty()) {
