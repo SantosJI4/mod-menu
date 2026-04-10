@@ -6,6 +6,10 @@ import java.io.InputStreamReader;
 
 public class RootHelper {
 
+    public interface LineCallback {
+        void onLine(String line);
+    }
+
     public static boolean isRooted() {
         try {
             Process process = Runtime.getRuntime().exec("su -c id");
@@ -21,6 +25,10 @@ public class RootHelper {
     }
 
     public static String executeAsRoot(String command) {
+        return executeAsRoot(command, null);
+    }
+
+    public static String executeAsRoot(String command, LineCallback callback) {
         try {
             Process process = Runtime.getRuntime().exec("su");
             DataOutputStream os = new DataOutputStream(process.getOutputStream());
@@ -37,18 +45,35 @@ public class RootHelper {
             String line;
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
+                if (callback != null) {
+                    callback.onLine(line);
+                }
             }
             while ((line = errReader.readLine()) != null) {
-                output.append("[ERR] ").append(line).append("\n");
+                String errLine = "[ERR] " + line;
+                output.append(errLine).append("\n");
+                if (callback != null) {
+                    callback.onLine(errLine);
+                }
             }
 
             reader.close();
             errReader.close();
-            process.waitFor();
+            int exitCode = process.waitFor();
+            
+            String exitLine = "[EXIT] codigo: " + exitCode;
+            output.append(exitLine).append("\n");
+            if (callback != null) {
+                callback.onLine(exitLine);
+            }
 
             return output.toString();
         } catch (Exception e) {
-            return "Erro: " + e.getMessage();
+            String err = "Erro: " + e.getMessage();
+            if (callback != null) {
+                callback.onLine(err);
+            }
+            return err;
         }
     }
 }
