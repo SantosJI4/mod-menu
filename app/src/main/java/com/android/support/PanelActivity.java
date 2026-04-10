@@ -211,9 +211,9 @@ public class PanelActivity extends Activity {
 
                 long execStart = System.currentTimeMillis();
 
-                // Usar nohup + setsid para desacoplar o processo do shell pai
-                // Assim a injecao continua rodando mesmo apos o su/shell fechar
-                RootHelper.executeAsRoot("nohup setsid " + SCRIPT_PATH + " </dev/null 2>&1", new RootHelper.LineCallback() {
+                // Executar direto sem wrappers - manter ambiente igual ao terminal manual
+                // sleep 10 garante tempo para processos filhos inicializarem antes do shell fechar
+                RootHelper.executeAsRoot(SCRIPT_PATH + " ; sleep 10", new RootHelper.LineCallback() {
                     @Override
                     public void onLine(String line) {
                         if (!line.trim().isEmpty()) {
