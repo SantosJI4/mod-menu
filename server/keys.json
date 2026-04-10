@@ -1,0 +1,10 @@
+{
+    "TESTE-1234-ABCD": {
+        "active": true,
+        "user": "teste"
+    },
+    "KEY-5678-EFGH": {
+        "active": true,
+        "user": "dev"
+    }
+}

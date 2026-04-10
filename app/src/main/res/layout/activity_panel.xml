@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#1a1a2e">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Painel de Controle"
+        android:textSize="22sp"
+        android:textColor="#e94560"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Root Status -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Status Root:"
+            android:textColor="#aaaaaa"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvRootStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Verificando..."
+            android:textSize="16sp"
+            android:textColor="#ffaa00" />
+    </LinearLayout>
+
+    <!-- Script Status -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="24dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Script:"
+            android:textColor="#aaaaaa"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvScriptStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nao baixado"
+            android:textSize="16sp"
+            android:textColor="#ff4444" />
+    </LinearLayout>
+
+    <!-- Package name input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pacote do Jogo"
+        android:textColor="#aaaaaa"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/etPackage"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="com.exemplo.jogo"
+        android:textColor="#ffffff"
+        android:textColorHint="#666666"
+        android:background="@drawable/input_bg"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:singleLine="true"
+        android:inputType="text"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Download Button -->
+    <Button
+        android:id="@+id/btnDownload"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="BAIXAR SCRIPT"
+        android:textColor="#ffffff"
+        android:background="@drawable/btn_secondary_bg"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Inject Button -->
+    <Button
+        android:id="@+id/btnInject"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="INICIAR E INJETAR"
+        android:textColor="#ffffff"
+        android:background="@drawable/btn_bg"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Log area -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log:"
+        android:textColor="#aaaaaa"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/input_bg"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tvLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#00ff41"
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:text="Aguardando..." />
+    </ScrollView>
+
+</LinearLayout>
