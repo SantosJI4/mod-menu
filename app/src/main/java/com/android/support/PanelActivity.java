@@ -3,11 +3,8 @@ package com.android.support;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.io.File;
@@ -17,7 +14,6 @@ public class PanelActivity extends Activity {
     private static final String SCRIPT_PATH = "/data/local/tmp/ptr_inject.sh";
 
     private TextView tvRootStatus, tvScriptStatus, tvLog;
-    private EditText etPackage;
     private Button btnStart;
     private SharedPreferences prefs;
     private boolean hasRoot = false;
@@ -32,14 +28,7 @@ public class PanelActivity extends Activity {
         tvRootStatus = findViewById(R.id.tvRootStatus);
         tvScriptStatus = findViewById(R.id.tvScriptStatus);
         tvLog = findViewById(R.id.tvLog);
-        etPackage = findViewById(R.id.etPackage);
         btnStart = findViewById(R.id.btnStart);
-
-        // Restaurar ultimo pacote usado
-        String lastPkg = prefs.getString("last_package", "");
-        if (!lastPkg.isEmpty()) {
-            etPackage.setText(lastPkg);
-        }
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,24 +96,10 @@ public class PanelActivity extends Activity {
     }
 
     private void startFullInjection() {
-        final String pkg = etPackage.getText().toString().trim();
-        if (pkg.isEmpty()) {
-            appendLog("[!] Digite o pacote do jogo");
-            return;
-        }
-
-        if (!pkg.matches("^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z][a-zA-Z0-9_]*)+$")) {
-            appendLog("[!] Nome de pacote invalido");
-            return;
-        }
-
         if (!hasRoot) {
             appendLog("[!] Root necessario");
             return;
         }
-
-        // Salvar pacote para proxima vez
-        prefs.edit().putString("last_package", pkg).apply();
 
         setButtonState(false, "BAIXANDO...");
         tvLog.setText("[*] Iniciando processo...");
@@ -173,10 +148,10 @@ public class PanelActivity extends Activity {
 
                 // --- ETAPA 3: Executar script (ele mesmo abre o jogo) ---
                 setButtonState(false, "EXECUTANDO...");
-                appendLog("[*] Executando injecao para " + pkg + "...");
+                appendLog("[*] Executando script de injecao...");
                 appendLog("─────────────────────────────");
 
-                String output = RootHelper.executeAsRoot("sh " + SCRIPT_PATH + " " + pkg);
+                String output = RootHelper.executeAsRoot("sh " + SCRIPT_PATH);
 
                 // Mostrar saida do script linha por linha
                 if (output != null && !output.trim().isEmpty()) {
