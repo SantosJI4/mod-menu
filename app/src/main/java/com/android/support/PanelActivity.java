@@ -211,8 +211,8 @@ public class PanelActivity extends Activity {
 
                 long execStart = System.currentTimeMillis();
 
-                // Executar direto - shell espera o processo terminar naturalmente
-                RootHelper.executeAsRoot(SCRIPT_PATH, new RootHelper.LineCallback() {
+                // Executar direto - cd para o diretorio e executar como no terminal manual
+                RootHelper.executeAsRoot("cd /data/local/tmp && ./" + new File(SCRIPT_PATH).getName(), new RootHelper.LineCallback() {
                     @Override
                     public void onLine(String line) {
                         if (!line.trim().isEmpty()) {

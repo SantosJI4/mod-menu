@@ -1,7 +1,6 @@
 package com.android.support;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 
 public class RootHelper {
@@ -30,11 +29,9 @@ public class RootHelper {
 
     public static String executeAsRoot(String command, LineCallback callback) {
         try {
-            Process process = Runtime.getRuntime().exec("su");
-            DataOutputStream os = new DataOutputStream(process.getOutputStream());
-            os.writeBytes(command + "\n");
-            os.flush();
-            os.close(); // fecha stdin - shell termina naturalmente apos o comando
+            // Executa com su -c direto, sem pipe de stdin
+            // Igual a rodar no terminal: su -c "cd /dir && ./comando"
+            Process process = Runtime.getRuntime().exec(new String[]{"su", "-c", command});
 
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
