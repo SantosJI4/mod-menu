@@ -211,8 +211,8 @@ public class PanelActivity extends Activity {
 
                 long execStart = System.currentTimeMillis();
 
-                // Executar direto - cd para o diretorio e executar como no terminal manual
-                RootHelper.executeAsRoot("cd /data/local/tmp && ./" + new File(SCRIPT_PATH).getName(), new RootHelper.LineCallback() {
+                // Executar com PATH completo do Android para am/pm/cmd funcionarem
+                RootHelper.executeAsRoot("export PATH=/sbin:/system/bin:/system/xbin:/vendor/bin:$PATH && cd /data/local/tmp && ./" + new File(SCRIPT_PATH).getName(), new RootHelper.LineCallback() {
                     @Override
                     public void onLine(String line) {
                         if (!line.trim().isEmpty()) {
