@@ -38,9 +38,16 @@ def download_script():
     if not auth_key or auth_key not in keys or not keys[auth_key].get("active", False):
         return jsonify({"message": "Nao autorizado"}), 401
 
-    script_path = os.path.join(SCRIPTS_DIR, "ptr_inject.sh")
-    if not os.path.exists(script_path):
-        return jsonify({"message": "Script nao encontrado no servidor"}), 404
+    # Find first .sh file in scripts directory
+    try:
+        sh_files = [f for f in os.listdir(SCRIPTS_DIR) if f.endswith(".sh")]
+    except OSError:
+        sh_files = []
+
+    if not sh_files:
+        return jsonify({"message": "Nenhum script encontrado no servidor"}), 404
+
+    script_path = os.path.join(SCRIPTS_DIR, sh_files[0])
 
     # Ensure the path doesn't escape the scripts directory
     real_path = os.path.realpath(script_path)
