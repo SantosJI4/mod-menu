@@ -206,12 +206,12 @@ public class PanelActivity extends Activity {
 
                 // --- ETAPA 3: Executar ---
                 setButtonState(false, "EXECUTANDO...");
-                log("EXEC", "Executando: sh " + SCRIPT_PATH);
+                log("EXEC", "Executando: " + SCRIPT_PATH);
                 log("===", "─── SAIDA DO SCRIPT ───");
 
                 long execStart = System.currentTimeMillis();
 
-                RootHelper.executeAsRoot("sh " + SCRIPT_PATH, new RootHelper.LineCallback() {
+                RootHelper.executeAsRoot(SCRIPT_PATH, new RootHelper.LineCallback() {
                     @Override
                     public void onLine(String line) {
                         if (!line.trim().isEmpty()) {
