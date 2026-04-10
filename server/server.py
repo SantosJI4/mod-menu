@@ -83,11 +83,11 @@ if __name__ == "__main__":
 
     print("=" * 50)
     print("  SH Injector - Servidor")
-    print("  Rodando em http://0.0.0.0:5000")
+    print("  Rodando em http://0.0.0.0:80")
     print("=" * 50)
     print("  Keys de teste:")
     print("    - TESTE-1234-ABCD")
     print("    - KEY-5678-EFGH")
     print("=" * 50)
 
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=80)
