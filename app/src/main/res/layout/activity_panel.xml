@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Painel de Controle"
+        android:text="SH Injector"
         android:textSize="22sp"
         android:textColor="#e94560"
         android:textStyle="bold"
@@ -20,23 +20,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="12dp"
         android:gravity="center_vertical">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Status Root:"
+            android:text="Root:"
             android:textColor="#aaaaaa"
-            android:textSize="16sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/tvRootStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Verificando..."
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textColor="#ffaa00" />
     </LinearLayout>
 
@@ -45,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="20dp"
         android:gravity="center_vertical">
 
         <TextView
@@ -54,15 +54,15 @@
             android:layout_weight="1"
             android:text="Script:"
             android:textColor="#aaaaaa"
-            android:textSize="16sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/tvScriptStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nao baixado"
-            android:textSize="16sp"
-            android:textColor="#ff4444" />
+            android:text="Aguardando"
+            android:textSize="15sp"
+            android:textColor="#ffaa00" />
     </LinearLayout>
 
     <!-- Package name input -->
@@ -72,7 +72,7 @@
         android:text="Pacote do Jogo"
         android:textColor="#aaaaaa"
         android:textSize="14sp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="6dp" />
 
     <EditText
         android:id="@+id/etPackage"
@@ -86,27 +86,19 @@
         android:paddingEnd="16dp"
         android:singleLine="true"
         android:inputType="text"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="20dp" />
 
-    <!-- Download Button -->
+    <!-- Single Start Button -->
     <Button
-        android:id="@+id/btnDownload"
+        android:id="@+id/btnStart"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="BAIXAR SCRIPT"
+        android:layout_height="52dp"
+        android:text="INICIAR"
         android:textColor="#ffffff"
-        android:background="@drawable/btn_secondary_bg"
-        android:layout_marginBottom="12dp" />
-
-    <!-- Inject Button -->
-    <Button
-        android:id="@+id/btnInject"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="INICIAR E INJETAR"
-        android:textColor="#ffffff"
+        android:textSize="16sp"
+        android:textStyle="bold"
         android:background="@drawable/btn_bg"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="20dp" />
 
     <!-- Log area -->
     <TextView
@@ -114,7 +106,7 @@
         android:layout_height="wrap_content"
         android:text="Log:"
         android:textColor="#aaaaaa"
-        android:textSize="14sp"
+        android:textSize="13sp"
         android:layout_marginBottom="4dp" />
 
     <ScrollView

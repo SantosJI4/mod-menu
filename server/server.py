@@ -17,7 +17,7 @@ def load_keys():
 
 @app.route("/api/validate", methods=["POST"])
 def validate_key():
-    data = request.get_json()
+    data = request.get_json(force=True, silent=True)
     if not data or "key" not in data:
         return jsonify({"message": "Key nao fornecida"}), 400
 

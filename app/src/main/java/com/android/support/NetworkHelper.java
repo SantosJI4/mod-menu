@@ -33,18 +33,29 @@ public class NetworkHelper {
             if (code == 200) {
                 return "OK";
             } else {
-                BufferedReader br = new BufferedReader(
-                        new InputStreamReader(conn.getErrorStream()));
-                String line = br.readLine();
-                br.close();
-                if (line != null && line.contains("message")) {
-                    int start = line.indexOf("message") + 10;
-                    int end = line.indexOf("\"", start);
-                    if (start > 10 && end > start) {
-                        return line.substring(start, end);
+                InputStream errStream = conn.getErrorStream();
+                if (errStream != null) {
+                    BufferedReader br = new BufferedReader(
+                            new InputStreamReader(errStream));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    br.close();
+                    String body = sb.toString();
+                    // Parse "message":"value" from JSON
+                    int idx = body.indexOf("\"message\"");
+                    if (idx >= 0) {
+                        int colon = body.indexOf(":", idx);
+                        int qStart = body.indexOf("\"", colon + 1);
+                        int qEnd = body.indexOf("\"", qStart + 1);
+                        if (qStart >= 0 && qEnd > qStart) {
+                            return body.substring(qStart + 1, qEnd);
+                        }
                     }
                 }
-                return "Key invalida";
+                return "Key invalida (HTTP " + code + ")";
             }
         } catch (Exception e) {
             return "Erro de conexao: " + e.getMessage();

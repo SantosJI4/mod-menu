@@ -18,7 +18,7 @@ public class PanelActivity extends Activity {
 
     private TextView tvRootStatus, tvScriptStatus, tvLog;
     private EditText etPackage;
-    private Button btnDownload, btnInject;
+    private Button btnStart;
     private SharedPreferences prefs;
     private boolean hasRoot = false;
 
@@ -33,20 +33,18 @@ public class PanelActivity extends Activity {
         tvScriptStatus = findViewById(R.id.tvScriptStatus);
         tvLog = findViewById(R.id.tvLog);
         etPackage = findViewById(R.id.etPackage);
-        btnDownload = findViewById(R.id.btnDownload);
-        btnInject = findViewById(R.id.btnInject);
+        btnStart = findViewById(R.id.btnStart);
 
-        btnDownload.setOnClickListener(new View.OnClickListener() {
+        // Restaurar ultimo pacote usado
+        String lastPkg = prefs.getString("last_package", "");
+        if (!lastPkg.isEmpty()) {
+            etPackage.setText(lastPkg);
+        }
+
+        btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                downloadScript();
-            }
-        });
-
-        btnInject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                injectAndLaunch();
+                startFullInjection();
             }
         });
 
@@ -59,6 +57,16 @@ public class PanelActivity extends Activity {
             @Override
             public void run() {
                 tvLog.append("\n" + msg);
+            }
+        });
+    }
+
+    private void setButtonState(final boolean enabled, final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                btnStart.setEnabled(enabled);
+                btnStart.setText(text);
             }
         });
     }
@@ -78,8 +86,8 @@ public class PanelActivity extends Activity {
                         } else {
                             tvRootStatus.setText("Sem Root");
                             tvRootStatus.setTextColor(0xFFFF4444);
-                            appendLog("[!] Root nao encontrado");
-                            btnInject.setEnabled(false);
+                            appendLog("[!] Root nao encontrado - app requer root");
+                            btnStart.setEnabled(false);
                         }
                     }
                 });
@@ -93,19 +101,33 @@ public class PanelActivity extends Activity {
             tvScriptStatus.setText("Disponivel");
             tvScriptStatus.setTextColor(0xFF00FF41);
         } else {
-            tvScriptStatus.setText("Nao baixado");
-            tvScriptStatus.setTextColor(0xFFFF4444);
+            tvScriptStatus.setText("Sera baixado ao iniciar");
+            tvScriptStatus.setTextColor(0xFFFFAA00);
         }
     }
 
-    private void downloadScript() {
-        if (!hasRoot) {
-            appendLog("[!] Root necessario para salvar em /data/local/tmp/");
+    private void startFullInjection() {
+        final String pkg = etPackage.getText().toString().trim();
+        if (pkg.isEmpty()) {
+            appendLog("[!] Digite o pacote do jogo");
             return;
         }
 
-        btnDownload.setEnabled(false);
-        appendLog("[*] Iniciando download do script...");
+        if (!pkg.matches("^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z][a-zA-Z0-9_]*)+$")) {
+            appendLog("[!] Nome de pacote invalido");
+            return;
+        }
+
+        if (!hasRoot) {
+            appendLog("[!] Root necessario");
+            return;
+        }
+
+        // Salvar pacote para proxima vez
+        prefs.edit().putString("last_package", pkg).apply();
+
+        setButtonState(false, "BAIXANDO...");
+        tvLog.setText("[*] Iniciando processo...");
 
         final String key = prefs.getString("validated_key", "");
         final String serverUrl = "https://jawmodsuser.squareweb.app";
@@ -113,94 +135,62 @@ public class PanelActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // Download to app cache first, then move with root
-                final String tempPath = getCacheDir().getAbsolutePath() + "/inject.sh";
-                final String result = NetworkHelper.downloadScript(serverUrl, key, tempPath);
+                // --- ETAPA 1: Download do script ---
+                appendLog("[*] Baixando script do servidor...");
+                String tempPath = getCacheDir().getAbsolutePath() + "/inject.sh";
+                String dlResult = NetworkHelper.downloadScript(serverUrl, key, tempPath);
 
-                if ("OK".equals(result)) {
-                    appendLog("[+] Download concluido");
-                    // Move to /data/local/tmp/ using root
-                    String mvResult = RootHelper.executeAsRoot(
-                            "cp " + tempPath + " " + SCRIPT_PATH + " && chmod 755 " + SCRIPT_PATH
-                    );
-                    appendLog("[*] Movendo para " + SCRIPT_PATH);
-                    if (mvResult.contains("Erro")) {
-                        appendLog("[!] " + mvResult);
-                    } else {
-                        appendLog("[+] Script pronto em " + SCRIPT_PATH);
-                    }
-                } else {
-                    appendLog("[!] Falha: " + result);
+                if (!"OK".equals(dlResult)) {
+                    appendLog("[!] Falha no download: " + dlResult);
+                    setButtonState(true, "INICIAR");
+                    return;
                 }
+                appendLog("[+] Download concluido");
+
+                // --- ETAPA 2: Mover para /data/local/tmp/ com root ---
+                setButtonState(false, "PREPARANDO...");
+                appendLog("[*] Instalando script em " + SCRIPT_PATH + "...");
+
+                String cpResult = RootHelper.executeAsRoot(
+                        "cp " + tempPath + " " + SCRIPT_PATH +
+                        " && chmod 755 " + SCRIPT_PATH +
+                        " && chown root:root " + SCRIPT_PATH
+                );
+
+                if (cpResult.contains("Erro")) {
+                    appendLog("[!] Falha ao instalar script: " + cpResult);
+                    setButtonState(true, "INICIAR");
+                    return;
+                }
+                appendLog("[+] Script instalado");
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        btnDownload.setEnabled(true);
                         checkScript();
                     }
                 });
-            }
-        }).start();
-    }
 
-    private void injectAndLaunch() {
-        final String pkg = etPackage.getText().toString().trim();
-        if (pkg.isEmpty()) {
-            appendLog("[!] Digite o pacote do jogo");
-            return;
-        }
+                // --- ETAPA 3: Executar script (ele mesmo abre o jogo) ---
+                setButtonState(false, "EXECUTANDO...");
+                appendLog("[*] Executando injecao para " + pkg + "...");
+                appendLog("─────────────────────────────");
 
-        // Validate package name to prevent command injection
-        if (!pkg.matches("^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z][a-zA-Z0-9_]*)+$")) {
-            appendLog("[!] Nome de pacote invalido");
-            return;
-        }
+                String output = RootHelper.executeAsRoot("sh " + SCRIPT_PATH + " " + pkg);
 
-        File script = new File(SCRIPT_PATH);
-        if (!script.exists()) {
-            appendLog("[!] Script nao encontrado. Baixe primeiro.");
-            return;
-        }
-
-        if (!hasRoot) {
-            appendLog("[!] Root necessario para injetar");
-            return;
-        }
-
-        btnInject.setEnabled(false);
-        appendLog("[*] Iniciando " + pkg + "...");
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // Launch the game
-                RootHelper.executeAsRoot(
-                        "monkey -p " + pkg + " -c android.intent.category.LAUNCHER 1"
-                );
-                appendLog("[+] Jogo iniciado");
-
-                // Wait for game process to start
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException ignored) {
-                }
-
-                appendLog("[*] Executando script de injecao...");
-                String injectResult = RootHelper.executeAsRoot(
-                        "sh " + SCRIPT_PATH + " " + pkg
-                );
-                if (!injectResult.trim().isEmpty()) {
-                    appendLog("[>] " + injectResult.trim());
-                }
-                appendLog("[+] Injecao concluida");
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        btnInject.setEnabled(true);
+                // Mostrar saida do script linha por linha
+                if (output != null && !output.trim().isEmpty()) {
+                    String[] lines = output.split("\n");
+                    for (String line : lines) {
+                        if (!line.trim().isEmpty()) {
+                            appendLog(line);
+                        }
                     }
-                });
+                }
+
+                appendLog("─────────────────────────────");
+                appendLog("[+] Processo finalizado");
+                setButtonState(true, "INICIAR");
             }
         }).start();
     }
